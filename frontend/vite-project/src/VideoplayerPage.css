@@ -1,0 +1,35 @@
+/* Center the video player on the page */
+.video-player-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    /* Full viewport height */
+    background-color: #f8f9fa;
+    /* Light background for better visibility */
+    margin: 0;
+}
+
+/* Style the video player */
+.video-player {
+    width: 600px;
+    height: 600px;
+    background-color: #000;
+    /* Black background for the player */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Add a subtle shadow */
+    border-radius: 8px;
+    /* Rounded corners */
+    overflow: hidden;
+    /* Ensure content stays within the container */
+}
+
+/* Add responsive behavior for smaller screens */
+@media (max-width: 768px) {
+    .video-player {
+        width: 90%;
+        /* Reduce width to fit smaller screens */
+        height: auto;
+        /* Maintain aspect ratio */
+    }
+}

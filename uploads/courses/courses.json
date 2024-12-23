@@ -1,0 +1,17 @@
+[
+  {
+    "lessionId": "c98b3414-b538-45b6-8bfb-6d82cfeea0d6",
+    "videoUrl": "http://localhost:8000/uploads/courses/c98b3414-b538-45b6-8bfb-6d82cfeea0d6/index.m3u8",
+    "createdAt": "2024-12-23T07:33:05.960Z"
+  },
+  {
+    "lessionId": "6c27f1f5-ea1b-4e28-994b-63535d9e9519",
+    "videoUrl": "http://localhost:8000/uploads/courses/6c27f1f5-ea1b-4e28-994b-63535d9e9519/index.m3u8",
+    "createdAt": "2024-12-23T07:52:41.577Z"
+  },
+  {
+    "lessionId": "8915f804-6b16-493b-8c5c-e20e6ae0f7fa",
+    "videoUrl": "http://localhost:8000/uploads/courses/8915f804-6b16-493b-8c5c-e20e6ae0f7fa/index.m3u8",
+    "createdAt": "2024-12-23T08:42:22.597Z"
+  }
+]
