@@ -26,7 +26,7 @@ const storage = multer.diskStorage({
     },
 });
 
-const upload = multer({ storage });
+const upload = multer({ storage, limits: { fileSize: 50 * 1024 * 1024 } });
 
 // Middleware
 app.use(
@@ -51,8 +51,8 @@ app.get("/videos", (req, res) => {
     if (fs.existsSync(lessonsFilePath)) {
         const fileContent = fs.readFileSync(lessonsFilePath, 'utf8');
         if (fileContent) {
-            console.log(`${fileContent}`)
-            lessons = JSON.parse(fileContent); // Parse the JSON file content into an array           
+            //console.log(`${fileContent}`)
+            lessons = JSON.parse(fileContent).filter(x => x.isActive == true); // Parse the JSON file content into an array           
         }
     }
     res.status(200).json({ lessons });
@@ -67,6 +67,11 @@ app.post("/upload", upload.single("file"), (req, res) => {
             return res.status(400).json({ message: "No file uploaded" });
         }
 
+        const { lessonName } = req.body; // Access the lesson name
+        if (!lessonName) {
+            return res.status(400).json({ message: "Lesson name is required." });
+        }
+
         const lessionId = uuidv4();
         const videoPath = req.file.path; // Temp path
         const placeholderUrl = `/uploads/courses/${lessionId}/index.m3u8`;
@@ -74,6 +79,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
         // Move file metadata to a processing queue or database for cron job
         const uploadMetadata = {
             lessionId,
+            lessonName,
             videoPath,
             createdAt: new Date()
         };
@@ -87,6 +93,30 @@ app.post("/upload", upload.single("file"), (req, res) => {
     } catch (error) {
         console.error(`Error during upload: ${error}`);
         res.status(500).json({ message: "Error during file upload", error });
+    }
+});
+
+// Upload Endpoint
+app.delete("/upload/:lessonId", (req, res) => {
+    try {
+
+        if (!lessonId) {
+            return res.status(400).json({ message: "Lesson Id is required." });
+        }
+
+        const lessonsFilePath = `./uploads/courses/courses.json`;
+        let lessons = [];
+        const metadataPath = path.join(tempDir, file);
+        const metadata = JSON.parse(fs.readFileSync(metadataPath, "utf8"));
+
+        const { lessionId, lessonName, videoPath } = metadata;
+        console.log(metadata);
+        res.json({
+            message: "File deleted successfully. Processing will start soon.", lessionId,
+        });
+    } catch (error) {
+        console.error(`Error during deletion: ${error}`);
+        res.status(500).json({ message: "Error during lesson deletion", error });
     }
 });
 
@@ -130,7 +160,7 @@ cron.schedule("*/1 * * * *", async () => {
                 const metadataPath = path.join(tempDir, file);
                 const metadata = JSON.parse(fs.readFileSync(metadataPath, "utf8"));
 
-                const { lessionId, videoPath } = metadata;
+                const { lessionId, lessonName, videoPath } = metadata;
                 const outputPath = `./uploads/courses/${lessionId}`;
                 const hlsPath = `${outputPath}/index.m3u8`;
                 const videoUrl = `${BASEURL}/uploads/courses/${lessionId}/index.m3u8`
@@ -146,6 +176,7 @@ cron.schedule("*/1 * * * *", async () => {
 
                     const lession = {
                         lessionId,
+                        lessonName,
                         videoUrl,
                         createdAt: new Date()
                     };

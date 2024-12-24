@@ -1,17 +1,58 @@
 [
   {
     "lessionId": "c98b3414-b538-45b6-8bfb-6d82cfeea0d6",
+    "lessonName": "Lesson 1",
     "videoUrl": "http://localhost:8000/uploads/courses/c98b3414-b538-45b6-8bfb-6d82cfeea0d6/index.m3u8",
-    "createdAt": "2024-12-23T07:33:05.960Z"
+    "createdAt": "2024-12-23T07:33:05.960Z",
+    "isActive": true
   },
   {
     "lessionId": "6c27f1f5-ea1b-4e28-994b-63535d9e9519",
+    "lessonName": "Lesson 2",
     "videoUrl": "http://localhost:8000/uploads/courses/6c27f1f5-ea1b-4e28-994b-63535d9e9519/index.m3u8",
-    "createdAt": "2024-12-23T07:52:41.577Z"
+    "createdAt": "2024-12-23T07:52:41.577Z",
+    "isActive": true
   },
   {
     "lessionId": "8915f804-6b16-493b-8c5c-e20e6ae0f7fa",
+    "lessonName": "Lesson 3",
     "videoUrl": "http://localhost:8000/uploads/courses/8915f804-6b16-493b-8c5c-e20e6ae0f7fa/index.m3u8",
-    "createdAt": "2024-12-23T08:42:22.597Z"
+    "createdAt": "2024-12-23T08:42:22.597Z",
+    "isActive": true
+  },
+  {
+    "lessionId": "965620ca-1086-4e3d-b18f-5c26057ef563",
+    "lessonName": "Lesson 4",
+    "videoUrl": "http://localhost:8000/uploads/courses/965620ca-1086-4e3d-b18f-5c26057ef563/index.m3u8",
+    "createdAt": "2024-12-23T14:59:04.372Z",
+    "isActive": true
+  },
+  {
+    "lessionId": "5d3886f9-5a3a-407a-a4c9-905494bd418e",
+    "lessonName": "Lesson 5",
+    "videoUrl": "http://localhost:8000/uploads/courses/5d3886f9-5a3a-407a-a4c9-905494bd418e/index.m3u8",
+    "createdAt": "2024-12-23T15:19:41.570Z",
+    "isActive": true
+  },
+  {
+    "lessionId": "943927c6-abda-489d-93a1-99e73a8b0859",
+    "lessonName": "Lesson 6",
+    "videoUrl": "http://localhost:8000/uploads/courses/943927c6-abda-489d-93a1-99e73a8b0859/index.m3u8",
+    "createdAt": "2024-12-23T16:34:40.449Z",
+    "isActive": true
+  },
+  {
+    "lessionId": "355e613a-1c85-48ba-87ad-f748b58680cd",
+    "lessonName": "Lesson 7",
+    "videoUrl": "http://localhost:8000/uploads/courses/355e613a-1c85-48ba-87ad-f748b58680cd/index.m3u8",
+    "createdAt": "2024-12-23T18:01:39.727Z",
+    "isActive": true
+  },
+  {
+    "lessionId": "802b2ae1-63fe-4f49-8ca2-e646f3efb520",
+    "lessonName": "Testing Video",
+    "videoUrl": "http://localhost:8000/uploads/courses/802b2ae1-63fe-4f49-8ca2-e646f3efb520/index.m3u8",
+    "createdAt": "2024-12-24T19:51:08.027Z",
+    "isActive": true
   }
 ]
