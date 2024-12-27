@@ -81,7 +81,8 @@ app.post("/upload", upload.single("file"), (req, res) => {
             lessionId,
             lessonName,
             videoPath,
-            createdAt: new Date()
+            createdAt: new Date(),
+            isActive : true
         };
         fs.writeFileSync(`./uploads/temp/${lessionId}.json`, JSON.stringify(uploadMetadata));
 
@@ -159,8 +160,8 @@ cron.schedule("*/1 * * * *", async () => {
                 let lessons = [];
                 const metadataPath = path.join(tempDir, file);
                 const metadata = JSON.parse(fs.readFileSync(metadataPath, "utf8"));
-
-                const { lessionId, lessonName, videoPath } = metadata;
+                console.log(metadata);
+                const { lessionId, lessonName, videoPath, isActive } = metadata;
                 const outputPath = `./uploads/courses/${lessionId}`;
                 const hlsPath = `${outputPath}/index.m3u8`;
                 const videoUrl = `${BASEURL}/uploads/courses/${lessionId}/index.m3u8`
@@ -178,7 +179,9 @@ cron.schedule("*/1 * * * *", async () => {
                         lessionId,
                         lessonName,
                         videoUrl,
-                        createdAt: new Date()
+                        createdAt: new Date(),
+                        isActive
+
                     };
                     if (!fs.existsSync(lessonsFilePath)) {
                         fs.writeFileSync(lessonsFilePath, JSON.stringify([], null, 2));
