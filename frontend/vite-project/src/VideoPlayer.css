@@ -1,0 +1,21 @@
+.video-container {
+    flex: 1;
+    max-width: 50%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #000;
+  }
+  
+  .video-element {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+    border-radius: 8px;
+    object-fit: contain; /* Ensures the video maintains its aspect ratio */
+    background-color: black; /* Adds a black background for non-filled areas */
+  }
+  

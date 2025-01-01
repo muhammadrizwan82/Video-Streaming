@@ -44,14 +44,15 @@ app.get("/", (req, res) => {
     res.json({ message: "Hello World" });
 });
 
-app.get("/videos", (req, res) => {
+// Video Listing
+app.get("/lesson", (req, res) => {
     const lessonsFilePath = `./uploads/courses/courses.json`;
     let lessons = [];
 
     if (fs.existsSync(lessonsFilePath)) {
         const fileContent = fs.readFileSync(lessonsFilePath, 'utf8');
         if (fileContent) {
-            //console.log(`${fileContent}`)
+
             lessons = JSON.parse(fileContent).filter(x => x.isActive == true); // Parse the JSON file content into an array           
         }
     }
@@ -59,37 +60,78 @@ app.get("/videos", (req, res) => {
 
 });
 
-
-// Upload Endpoint
-app.post("/upload", upload.single("file"), (req, res) => {
+// Get Video By LessonId
+app.get("/lesson/:lessonId", (req, res) => {
     try {
-        if (!req.file) {
-            return res.status(400).json({ message: "No file uploaded" });
+
+        const lessonId = req.params.lessonId; // Retrieve 'id' from the path
+        if (!lessonId) {
+            return res.status(400).json({ message: "Lesson Id is required." });
         }
 
-        const { lessonName } = req.body; // Access the lesson name
+        const lessonsFilePath = `./uploads/courses/courses.json`;
+
+
+        if (fs.existsSync(lessonsFilePath)) {
+            const fileContent = fs.readFileSync(lessonsFilePath, 'utf8');
+            if (fileContent) {
+                const lesson = JSON.parse(fileContent).find(x => x.isActive == true && x.lessonId == lessonId)
+                if (lesson) {
+                    res.status(200).json(lesson);
+                }
+                else {
+                    res.status(400).json({ message: "invalid lesson id" })
+                }
+            }
+            else {
+                res.status(400).json({ message: "no lesson found on server" })
+            }
+        }
+        else {
+            res.status(400).json({ message: "no lesson found on server" })
+        }
+
+    } catch (error) {
+        console.error(`Error in getting lession: ${error}`);
+        res.status(500).json({ message: "Error in getting lession", error });
+    }
+});
+
+// Update Video By LessonId
+app.patch("/lesson/:lessonId", upload.single('file'), (req, res) => {
+    try {
+        const lessonId = req.params.lessonId;
+        const { lessonName } = req.body; // Access the lesson name from `req.body`
+
+        console.log('lessonName:', lessonName); // Debugging output
+        console.log('file:', req.file); // Debugging output
+
         if (!lessonName) {
             return res.status(400).json({ message: "Lesson name is required." });
         }
 
-        const lessionId = uuidv4();
+        if (!req.file) {
+            return res.status(400).json({ message: "No file uploaded" });
+        }
+
         const videoPath = req.file.path; // Temp path
-        const placeholderUrl = `/uploads/courses/${lessionId}/index.m3u8`;
+        const placeholderUrl = `/uploads/courses/${lessonId}/index.m3u8`;
 
         // Move file metadata to a processing queue or database for cron job
         const uploadMetadata = {
-            lessionId,
+            lessonId,
             lessonName,
             videoPath,
             createdAt: new Date(),
-            isActive : true
+            isActive: true,
         };
-        fs.writeFileSync(`./uploads/temp/${lessionId}.json`, JSON.stringify(uploadMetadata));
+
+        fs.writeFileSync(`./uploads/temp/${lessonId}.json`, JSON.stringify(uploadMetadata));
 
         res.json({
             message: "File uploaded successfully. Processing will start soon.",
             placeholderUrl,
-            lessionId,
+            lessonId,
         });
     } catch (error) {
         console.error(`Error during upload: ${error}`);
@@ -97,29 +139,48 @@ app.post("/upload", upload.single("file"), (req, res) => {
     }
 });
 
-// Upload Endpoint
-app.delete("/upload/:lessonId", (req, res) => {
+// Upload Videos
+app.post("/lesson", upload.single("file"), (req, res) => {
     try {
 
-        if (!lessonId) {
-            return res.status(400).json({ message: "Lesson Id is required." });
+        const { lessonName } = req.body; // Access the lesson name
+        console.log(lessonName)
+
+        if (!lessonName) {
+            return res.status(400).json({ message: "Lesson name is required." });
         }
 
-        const lessonsFilePath = `./uploads/courses/courses.json`;
-        let lessons = [];
-        const metadataPath = path.join(tempDir, file);
-        const metadata = JSON.parse(fs.readFileSync(metadataPath, "utf8"));
 
-        const { lessionId, lessonName, videoPath } = metadata;
-        console.log(metadata);
+        if (!req.file) {
+            return res.status(400).json({ message: "No file uploaded" });
+        }
+
+        const lessonId = uuidv4();
+        const videoPath = req.file.path; // Temp path
+        const placeholderUrl = `/uploads/courses/${lessonId}/index.m3u8`;
+
+        // Move file metadata to a processing queue or database for cron job
+        const uploadMetadata = {
+            lessonId,
+            lessonName,
+            videoPath,
+            createdAt: new Date(),
+            isActive: true
+        };
+
+        fs.writeFileSync(`./uploads/temp/${lessonId}.json`, JSON.stringify(uploadMetadata));
+
         res.json({
-            message: "File deleted successfully. Processing will start soon.", lessionId,
+            message: "File uploaded successfully. Processing will start soon.",
+            placeholderUrl,
+            lessonId,
         });
     } catch (error) {
-        console.error(`Error during deletion: ${error}`);
-        res.status(500).json({ message: "Error during lesson deletion", error });
+        console.error(`Error during upload: ${error}`);
+        res.status(500).json({ message: "Error during file upload", error });
     }
 });
+
 
 // FFmpeg Segmentation Function
 const convertToFFmpeg = (videoPath, outputPath, hlsPath) => {
@@ -140,7 +201,7 @@ const convertToFFmpeg = (videoPath, outputPath, hlsPath) => {
 
 // Cron Job to Process Unsegmented Files
 cron.schedule("*/1 * * * *", async () => {
-    console.log(isProcessing)
+
     if (isProcessing) {
         console.log("Job is already running, skipping this cycle...");
         return;
@@ -160,11 +221,11 @@ cron.schedule("*/1 * * * *", async () => {
                 let lessons = [];
                 const metadataPath = path.join(tempDir, file);
                 const metadata = JSON.parse(fs.readFileSync(metadataPath, "utf8"));
-                console.log(metadata);
-                const { lessionId, lessonName, videoPath, isActive } = metadata;
-                const outputPath = `./uploads/courses/${lessionId}`;
+
+                const { lessonId, lessonName, videoPath, isActive } = metadata;
+                const outputPath = `./uploads/courses/${lessonId}`;
                 const hlsPath = `${outputPath}/index.m3u8`;
-                const videoUrl = `${BASEURL}/uploads/courses/${lessionId}/index.m3u8`
+                const videoUrl = `${BASEURL}/uploads/courses/${lessonId}/index.m3u8`
 
                 if (!fs.existsSync(outputPath)) {
                     fs.mkdirSync(outputPath, { recursive: true });
@@ -175,8 +236,8 @@ cron.schedule("*/1 * * * *", async () => {
                     fs.unlinkSync(videoPath); // Delete temp video file
                     fs.unlinkSync(metadataPath); // Delete metadata file
 
-                    const lession = {
-                        lessionId,
+                    const lesson = {
+                        lessonId,
                         lessonName,
                         videoUrl,
                         createdAt: new Date(),
@@ -192,13 +253,17 @@ cron.schedule("*/1 * * * *", async () => {
                         lessons = JSON.parse(fileContent); // Parse the JSON file content into an array
                         if (lessons) {
                             // Append the new lesson 
-                            lessons.push(lession);
+                            // filterLessons = lessons.filter(x => x.isActive == true && x.lessonId != lessonId)
+                            // if (filterLessons) {
+                            //     lessons = filterLessons;
+                            // }
+                            lessons.push(lesson);
                             fs.writeFileSync(lessonsFilePath, JSON.stringify(lessons, null, 2));
                         }
                     }
-                    console.log(`Processed and cleaned up files for lessionId: ${lessionId}`);
+                    console.log(`Processed and cleaned up files for lessonId: ${lessonId}`);
                 } catch (error) {
-                    console.error(`Error processing file for lessionId: ${lessionId}, Error: ${error}`);
+                    console.error(`Error processing file for lessonId: ${lessonId}, Error: ${error}`);
                 }
             }
         }

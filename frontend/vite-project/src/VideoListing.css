@@ -1,0 +1,63 @@
+.app-container {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .video-table {
+    width: 100%;
+    margin: 0 auto;
+    border-collapse: collapse;
+  }
+  
+  .video-table th,
+  .video-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  .video-table th {
+    background-color: #f4f4f4;
+    text-align: center;
+  }
+  
+  .video-table tr:hover {
+    background-color: #f9f9f9;
+  }
+  
+  .play-button {
+    padding: 6px 12px;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .play-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .video-player-container {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .upload-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+  }
+  
+  .upload-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .upload-button:hover {
+    background-color: #0056b3;
+  }

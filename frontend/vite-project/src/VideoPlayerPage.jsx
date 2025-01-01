@@ -6,7 +6,6 @@ import './VideoplayerPage.css';
 function VideoPlayerPage() {
     const [searchParams] = useSearchParams();
     const videoUrl = searchParams.get('src');
-
     const videoPlayerOptions = {
         autoplay: true,
         controls: true,
